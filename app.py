@@ -1,44 +1,57 @@
-import streamlit as st
 import requests
+from flask import Flask, render_template, request
 import pandas as pd
 
-st.title("🌤 Ứng dụng Mô phỏng Dữ liệu Thời tiết – Open-Meteo")
+app = Flask(__name__)
 
-latitude = st.number_input("Nhập vĩ độ (latitude)", value=52.52, format="%.2f")
-longitude = st.number_input("Nhập kinh độ (longitude)", value=13.41, format="%.2f")
-
-if st.button("Lấy dữ liệu"):
-    url = (
-        f"https://api.open-meteo.com/v1/forecast?"
-        f"latitude={latitude}&longitude={longitude}"
-        f"&current=temperature_2m,wind_speed_10m"
-        f"&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m"
-    )
-    response = requests.get(url)
-    data = response.json()
-
-    current_data = {
-        'Current Time': [data['current']['time']],
-        'Temperature_2m (°C)': [data['current']['temperature_2m']],
-        'Wind_Speed_10m (m/s)': [data['current']['wind_speed_10m']]
+# API của Open-Meteo hoặc bạn có thể thay thế bằng API khác
+def get_weather_data(city_name):
+    # Thay đổi latitude và longitude theo tỉnh thành
+    location_map = {
+        "Hà Nội": {"latitude": 21.0285, "longitude": 105.8542},
+        "Hồ Chí Minh": {"latitude": 10.8231, "longitude": 106.6297},
+        "Đà Nẵng": {"latitude": 16.0471, "longitude": 108.2068},
+        # Bạn có thể thêm các tỉnh thành khác vào đây
     }
-    df_current = pd.DataFrame(current_data)
 
-    hourly_data = {
-        'Hourly Time': data['hourly']['time'],
-        'Temperature_2m (°C)': data['hourly']['temperature_2m'],
-        'Relative_Humidity_2m (%)': data['hourly']['relative_humidity_2m'],
-        'Wind_Speed_10m (m/s)': data['hourly']['wind_speed_10m']
-    }
-    df_hourly = pd.DataFrame(hourly_data)
+    location = location_map.get(city_name)
 
-    st.subheader("📍 Dữ liệu hiện tại")
-    st.dataframe(df_current)
+    if location:
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={location['latitude']}&longitude={location['longitude']}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m"
+        response = requests.get(url)
+        data = response.json()
+        return data
+    else:
+        return None
 
-    st.subheader("🕒 Dữ liệu theo giờ")
-    st.dataframe(df_hourly)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    cities = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng"]  # Thêm các tỉnh thành khác nếu cần
+    weather_data = None
 
-    csv = df_hourly.to_csv(index=False).encode('utf-8')
-    st.download_button("💾 Tải dữ liệu theo giờ (.CSV)", data=csv, file_name='hourly_weather.csv')
+    if request.method == "POST":
+        city = request.form["city"]
+        weather_data = get_weather_data(city)
 
-    st.success("✅ Hoàn tất! Dữ liệu đã được lấy thành công.")
+        if weather_data:
+            # Xử lý dữ liệu để hiển thị
+            current_weather = weather_data["current"]
+            hourly_weather = weather_data["hourly"]
+
+            # Chuyển dữ liệu vào DataFrame
+            df_hourly = pd.DataFrame({
+                "Time": hourly_weather["time"],
+                "Temperature (°C)": hourly_weather["temperature_2m"],
+                "Humidity (%)": hourly_weather["relative_humidity_2m"],
+                "Wind Speed (m/s)": hourly_weather["wind_speed_10m"]
+            })
+
+            # Lưu vào file CSV (tuỳ chọn)
+            df_hourly.to_csv(f"{city}_weather.csv", index=False)
+
+            return render_template("index.html", cities=cities, weather_data=current_weather, df_hourly=df_hourly)
+
+    return render_template("index.html", cities=cities, weather_data=weather_data, df_hourly=None)
+
+if __name__ == "__main__":
+    app.run(debug=True)
