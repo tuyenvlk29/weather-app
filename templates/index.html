@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Collection App</title>
+</head>
+<body>
+    <h1>Ứng dụng thu thập thông tin thời gian thực</h1>
+
+    <form method="POST">
+        <label for="city">Chọn tỉnh thành:</label>
+        <select name="city" id="city">
+            {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Xem thời tiết</button>
+    </form>
+
+    {% if weather_data %}
+        <h2>Thông tin thời tiết hiện tại cho {{ weather_data['time'] }}:</h2>
+        <p>Temperature: {{ weather_data['temperature_2m'] }}°C</p>
+        <p>Wind Speed: {{ weather_data['wind_speed_10m'] }} m/s</p>
+    {% endif %}
+
+    {% if df_hourly %}
+        <h3>Thông tin thời tiết theo giờ:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Nhiệt độ (°C)</th>
+                    <th>Độ ẩm (%)</th>
+                    <th>Tốc độ gió (m/s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in df_hourly.iterrows() %}
+                    <tr>
+                        <td>{{ row['Time'] }}</td>
+                        <td>{{ row['Temperature (°C)'] }}</td>
+                        <td>{{ row['Humidity (%)'] }}</td>
+                        <td>{{ row['Wind Speed (m/s)'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <footer>
+        <p>© 2025 Trường THPT Lê Quý Đôn – Long Bình Tân | App thu thập thông tin thời gian thực</p>
+    </footer>
+</body>
+</html>
