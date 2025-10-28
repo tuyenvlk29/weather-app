@@ -1,13 +1,8 @@
-# app.py
-# ỨNG DỤNG TRA CỨU THÔNG SỐ THỜI TIẾT THỜI GIAN THỰC (Phiên bản 4)
-# Yêu cầu: Python 3.10+, pip install streamlit requests pandas plotly
-
 import streamlit as st
 import requests
 import pandas as pd
 from datetime import datetime
 import plotly.express as px
-import random
 
 st.set_page_config(
     page_title="ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC",
@@ -117,6 +112,10 @@ st.markdown(
         transform: translateY(-2px);
         box-shadow: 0 10px 18px rgba(0,0,0,0.18);
     }
+    /* Small buttons (download) */
+    .download-btn > button {
+        background-color: #0066CC;
+    }
 
     /* Card like panels */
     .panel {
@@ -125,6 +124,10 @@ st.markdown(
         padding: 12px;
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
     }
+
+    /* Make sidebar headers readable */
+    .css-1d391kg .stSidebar { color: #000; }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -339,5 +342,10 @@ with col2:
     st.markdown("- Dữ liệu: cập nhật theo thời gian thực khi bấm 'Lấy dữ liệu'")
     st.markdown("---")
     st.markdown("### Hướng dẫn sử dụng ngắn gọn")
-   st.markdown("1. Chọn địa phương ở thanh bên → bấm **Lấy dữ liệu**.  \n2. Xem biểu đồ/ bảng.  \n3. Bấm **Xuất CSV** để lưu dữ liệu (cột không dấu phù hợp Excel).")
+    st.markdown("1. Chọn địa phương ở thanh bên → bấm **Lấy dữ liệu**.  \n2. Xem biểu đồ/ bảng.  \n3. Bấm **Xuất CSV** để lưu dữ liệu (cột không dấu phù hợp Excel).")
+    st.markdown("</div>", unsafe_allow_html=True)
 
+# Close main-content wrapper div
+st.markdown('</div>', unsafe_allow_html=True)
+
+# End of file
