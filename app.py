@@ -339,4 +339,5 @@ with col2:
     st.markdown("- Dữ liệu: cập nhật theo thời gian thực khi bấm 'Lấy dữ liệu'")
     st.markdown("---")
     st.markdown("### Hướng dẫn sử dụng ngắn gọn")
-    st.markdown("1. Chọn địa phương ở thanh bên → bấm **Lấy dữ liệu**.  \n2.
+   st.markdown("1. Chọn địa phương ở thanh bên → bấm **Lấy dữ liệu**.  \n2. Xem biểu đồ/ bảng.  \n3. Bấm **Xuất CSV** để lưu dữ liệu (cột không dấu phù hợp Excel).")
+
