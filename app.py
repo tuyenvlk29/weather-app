@@ -10,6 +10,7 @@ import plotly.express as px
 st.markdown(
     """
     <style>
+    /* Cập nhật giao diện và hiệu ứng */
     .stApp {
         background: linear-gradient(135deg, #0f4c81 0%, #146c9a 40%, #1aa7b8 100%);
         color: #fff;
@@ -30,7 +31,7 @@ st.markdown(
     }
 
     .panel-6 {
-        background: #028B8C; 
+        background: #028B8C; /* Màu xanh teal cho chatbot */
         border-radius: 12px;
         padding: 12px;
         margin-top: 10px;
@@ -62,6 +63,7 @@ st.markdown(
         box-shadow: 0 10px 18px rgba(0,0,0,0.18);
     }
 
+    /* Khung chatbot */
     .chatbot-box {
         height: 300px;
         overflow-y: scroll;
@@ -71,6 +73,7 @@ st.markdown(
         margin-top: 10px;
     }
 
+    /* Style cho nút Chatbot */
     .chat-button {
         background-color: #028B8C;
         color: white;
@@ -86,17 +89,13 @@ st.markdown(
 )
 
 # =========================
-# API Hugging Face Chatbot (Với API Key)
+# API Hugging Face Chatbot
 # =========================
 HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct"
-HF_API_KEY = "YOUR_HUGGINGFACE_API_KEY"  # Thay thế bằng API Key của bạn
 
 def query_hf_model(prompt: str):
     try:
-        headers = {
-            "Authorization": f"Bearer {HF_API_KEY}",
-            "Content-Type": "application/json"
-        }
+        headers = {"Content-Type": "application/json"}
         payload = {"inputs": prompt, "parameters": {"max_new_tokens": 100}}
         response = requests.post(HF_API_URL, json=payload, headers=headers, timeout=20)
 
