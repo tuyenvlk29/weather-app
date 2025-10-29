@@ -180,7 +180,7 @@ def fetch_weather(lat, lon):
 # ===== PHẦN 2: Chatbot AI + chế độ dự phòng offline =====
 
 # API Hugging Face (Mixtral-8x7B-Instruct)
-API_KEY = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # 🔑 Dán token Hugging Face của Thầy vào đây
+API_KEY = "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"  # 🔑 Dán token Hugging Face của Thầy vào đây
 
 # --- Hàm Chatbot AI ---
 def ask_chatbot(user_question: str):
@@ -195,7 +195,7 @@ def ask_chatbot(user_question: str):
     try:
          response = requests.post(
              "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct",
-             headers={"Authorization": f"Bearer {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}"},
+             headers={"Authorization": f"Bearer {API_KEY}"},
              json={"inputs": f"Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu: {user_question}"}
          )
          if response.status_code == 200:
