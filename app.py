@@ -189,19 +189,14 @@ def ask_chatbot(user_question: str):
     Ưu tiên gọi API Mixtral (Hugging Face).
     Nếu không có mạng hoặc lỗi quota → trả lời từ bộ dữ liệu dự phòng.
     """
-
-    # === GỌI API THẬT TẠI ĐÂY ===
-    # Nếu muốn kích hoạt Chatbot online, bỏ dấu # ở các dòng dưới và nhập API_KEY thật
     try:
-          response = requests.post(
-              "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct",
-              headers={"Authorization": f"Bearer {API_KEY}"},
-              json={"inputs": f"Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu: {user_question}"}
-          )
-          if response.status_code == 200:
-              data = response.json()
-              if isinstance(data, list) and "generated_text" in data[0]:
-                  return data[0]["generated_text"]
+        # === GỌI API THẬT TẠI ĐÂY ===
+        # Nếu muốn kích hoạt Chatbot online, bỏ dấu # ở các dòng dưới và nhập API_KEY thật
+        # response = requests.post(
+        #     "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct",
+        #     headers={"Authorization": f"Bearer {API_KEY}"},
+        #
+
 
         # Giả sử API bị lỗi, chuyển sang dự phòng:
         raise Exception("API not active in demo mode")
