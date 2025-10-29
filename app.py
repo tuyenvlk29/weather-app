@@ -182,10 +182,22 @@ st.markdown("Chọn thông số hiển thị:")
 params_default = ["Nhiệt độ (°C)", "Độ ẩm (%)", "Lượng mưa (mm)", "Tốc độ gió (m/s)", "Chỉ số UV"]
 selected_params = st.multiselect("Thông số", options=params_default, default=params_default[:4])
 
-# Ô tích trắng chữ trắng rõ ràng
+# Ô tích chữ màu xanh đen đậm
+st.markdown("""
+<style>
+/* Đổi màu chữ ô checkbox thành xanh đen đậm */
+div[data-testid="stCheckbox"] label p {
+    color: #002b5b !important;
+    font-weight: 700;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Tạo checkbox với nội dung tùy chọn
 allow_csv = st.checkbox("Cho phép xuất CSV (cột không dấu)", value=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ===========================
 # 3️⃣ Khung kết quả tra cứu
