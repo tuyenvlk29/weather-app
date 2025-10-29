@@ -1,119 +1,119 @@
-# app.py — Phiên bản 4.2
-# Ứng dụng tra cứu thời tiết + Chatbot AI (Mixtral) + chế độ dự phòng offline
-# Yêu cầu: pip install streamlit pandas requests plotly
+# ===========================
+# ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC
+# Phiên bản 3 – Giao diện 5 khung tông xanh chuyên nghiệp
+# ===========================
 
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.express as px
 from datetime import datetime
+import plotly.express as px
 
-# ===== Cấu hình trang =====
-st.set_page_config(
-    page_title="ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC", layout="wide")
 
-# ===== CSS tổng thể =====
+# ===========================
+# CSS: chia 5 khung, màu line & fill riêng biệt
+# ===========================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
 html, body, [class*="css"]  {
   font-family: 'Roboto', sans-serif;
 }
+
+/* Tổng thể nền */
 .stApp {
-    background: linear-gradient(135deg, #0f4c81, #146c9a, #1aa7b8);
-    color: white;
+    background: linear-gradient(135deg, #002b5b 0%, #004e89 50%, #017a8a 100%);
+    color: #fff;
 }
+
+/* Hiệu ứng neon tiêu đề */
 .neon-title {
-    text-align: center;
-    margin-top: 15px;
-    font-weight: 900;
-    font-size: 36px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    line-height: 1.3em;
-    color: #fff;
-    text-shadow:
-      0 0 5px #fff,
-      0 0 10px #4fc3dc,
-      0 0 20px #4fc3dc,
-      0 0 40px #6a5acd,
-      0 0 80px #6a5acd;
-    animation: flicker 3s infinite alternate;
+  font-weight: 900;
+  font-size: 34px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-top: 10px;
+  animation: neonGlow 5s linear infinite;
 }
-@keyframes flicker {
-  0% { opacity:1; text-shadow:0 0 6px #fff,0 0 12px #4fc3dc;}
-  50%{opacity:0.85;text-shadow:0 0 6px #fff,0 0 12px #6a5acd;}
-  100%{opacity:1;text-shadow:0 0 8px #fff,0 0 16px #00ffff;}
+@keyframes neonGlow {
+  0% { text-shadow: 0 0 8px #00eaff, 0 0 20px #00cfff, 0 0 30px #00bfff; }
+  50% { text-shadow: 0 0 10px #0ff, 0 0 25px #00ffea, 0 0 35px #4dffff; }
+  100% { text-shadow: 0 0 8px #00eaff, 0 0 20px #00cfff, 0 0 30px #00bfff; }
 }
-.panel {
-    background: rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 18px;
-    margin-top: 18px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.25);
-}
-.panel h3 {
-    color: #fff;
-    font-weight: 700;
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-}
-section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.1);
-}
-.stButton > button {
-    background-color: #ffffff;
-    color: #002B5B !important;
-    border-radius: 8px;
-    font-weight: 700;
-    border: 2px solid #002B5B;
-    transition: 0.3s;
-}
-.stButton > button:hover {
-    background-color: #00BFFF;
-    color: white !important;
-    border: 2px solid #ffffff;
-    transform: scale(1.05);
-}
-.footer {
+
+/* Thanh bản quyền */
+.fixed-topbar {
   position: fixed;
+  top: 55px;
   left: 0;
-  bottom: 0;
   width: 100%;
-  background: rgba(0, 43, 91, 0.98);
-  color: white;
+  background: rgba(255,255,255,0.95);
+  color: #003366;
+  font-weight: 700;
+  font-size: 15px;
   text-align: center;
   padding: 8px 0;
-  font-size: 15px;
-  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   z-index: 9999;
 }
-.chatbox {
-    background-color: rgba(255,255,255,0.08);
-    border-radius: 10px;
-    padding: 15px;
-    max-height: 400px;
-    overflow-y: auto;
+
+/* Khung chung */
+.frame {
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  border: 2px solid rgba(255,255,255,0.25);
+  transition: all 0.3s ease;
 }
-.chat-input textarea {
-    border-radius: 8px;
+.frame:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 18px rgba(255,255,255,0.25);
+}
+
+/* Màu nền riêng từng khung */
+.title-frame {background-color: #003B73;}
+.config-frame {background-color: #004E89;}
+.result-frame {background-color: #005F73;}
+.info-frame {background-color: #017A8A;}
+.guide-frame {background-color: #01949A;}
+
+/* Nút bấm */
+div.stButton > button {
+  background-color: #00aaff;
+  color: white !important;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  transition: 0.3s;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+div.stButton > button:hover {
+  background-color: #00d4ff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.25);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ===== Tiêu đề =====
+# ===========================
+# 1️⃣ Khung tiêu đề
+# ===========================
+st.markdown('<div class="title-frame"><div class="neon-title">ỨNG DỤNG TRA CỨU THÔNG SỐ THỜI TIẾT THỜI GIAN THỰC</div></div>', unsafe_allow_html=True)
+
+# Thanh bản quyền cố định trên cùng
 st.markdown("""
-<div class="neon-title">
-  ỨNG DỤNG TRA CỨU THÔNG SỐ<br>THỜI TIẾT THỜI GIAN THỰC
+<div class="fixed-topbar">
+© 2025 Trường THPT Lê Quý Đôn – Long Bình Tân | Web app thu thập dữ liệu thời gian thực
 </div>
 """, unsafe_allow_html=True)
 
-# ===== 34 tỉnh/thành =====
+# ===========================
+# Dữ liệu tỉnh/thành
+# ===========================
 PROVINCES_34 = {
     "An Giang": (10.5230, 105.1259),
     "Bắc Ninh": (21.1867, 106.0833),
@@ -151,126 +151,88 @@ PROVINCES_34 = {
     "TP. Huế": (16.4637, 107.5909)
 }
 
-# ===== Sidebar =====
-st.sidebar.header("🧭 Cấu hình")
-selected_place = st.sidebar.selectbox("Chọn tỉnh/thành:", list(PROVINCES_34.keys()))
-params = ["🌡️ Nhiệt độ (°C)", "💧 Độ ẩm (%)", "🌧️ Lượng mưa (mm)", "💨 Tốc độ gió (m/s)", "☀️ Chỉ số UV"]
-selected_params = st.sidebar.multiselect("Chọn thông số hiển thị:", options=params, default=params[:3])
-allow_csv = st.sidebar.checkbox("💾 Cho phép xuất dữ liệu CSV", value=True)
-
-# ===== Hàm lấy dữ liệu từ API thời tiết =====
-def fetch_weather(lat, lon):
-    tz = "Asia/Ho_Chi_Minh"
-    p = "temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,uv_index"
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly={p}&timezone={tz}"
-    r = requests.get(url, timeout=10)
-    r.raise_for_status()
-    data = r.json().get("hourly", {})
-    df = pd.DataFrame({
-        "Thời gian": data.get("time", []),
-        "🌡️ Nhiệt độ (°C)": data.get("temperature_2m", []),
-        "💧 Độ ẩm (%)": data.get("relative_humidity_2m", []),
-        "🌧️ Lượng mưa (mm)": data.get("precipitation", []),
-        "💨 Tốc độ gió (m/s)": data.get("wind_speed_10m", []),
-        "☀️ Chỉ số UV": data.get("uv_index", [])
-    })
-    if not df.empty:
-        df["Thời gian"] = pd.to_datetime(df["Thời gian"])
-    return df
-# ===== PHẦN 2: Chatbot AI + chế độ dự phòng offline =====
-
-# API Hugging Face (Mixtral-8x7B-Instruct)
-API_KEY = "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"  # 🔑 Dán token Hugging Face của Thầy vào đây
-
-# --- Hàm Chatbot AI ---
-def ask_chatbot(user_question: str):
-    """
-    Trả lời câu hỏi từ học sinh.
-    Ưu tiên gọi API Mixtral (Hugging Face).
-    Nếu không có mạng hoặc lỗi quota → trả lời từ bộ dữ liệu dự phòng.
-    """
-    try:
-        # === GỌI API THẬT TẠI ĐÂY ===
-        # Nếu muốn kích hoạt Chatbot online, bỏ dấu # ở các dòng dưới và nhập API_KEY thật
-        # response = requests.post(
-        #     "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct",
-        #     headers={"Authorization": f"Bearer {API_KEY}"},
-        #
-
-
-        # Giả sử API bị lỗi, chuyển sang dự phòng:
-        raise Exception("API not active in demo mode")
-
-    except Exception:
-        # Nếu API lỗi, tìm trong cơ sở dữ liệu dự phòng
-        return find_offline_answer(user_question)
-
-
-# ===== Dữ liệu dự phòng (FAQ offline) =====
-FAQ_DATA = [
-    {"q": "nhiệt độ là gì", "a": "Nhiệt độ cho biết mức độ nóng hay lạnh của một vật hoặc môi trường. Đơn vị thường dùng là °C."},
-    {"q": "vì sao trời mưa", "a": "Trời mưa khi hơi nước trong khí quyển ngưng tụ thành giọt nước đủ nặng để rơi xuống."},
-    {"q": "chỉ số uv là gì", "a": "Chỉ số UV thể hiện cường độ tia cực tím từ Mặt Trời. Chỉ số càng cao càng dễ gây hại da."},
-    {"q": "vì sao có gió", "a": "Gió hình thành do sự chênh lệch áp suất giữa các vùng khí quyển, không khí di chuyển từ nơi áp cao sang áp thấp."},
-    {"q": "độ ẩm là gì", "a": "Độ ẩm cho biết lượng hơi nước có trong không khí. Khi độ ẩm cao, không khí ẩm ướt và dễ gây cảm giác oi bức."},
-    {"q": "vì sao có bão", "a": "Bão hình thành khi vùng áp thấp trên đại dương hút không khí ẩm, tạo thành xoáy mạnh quanh tâm."},
-    {"q": "tốc độ gió bao nhiêu là mạnh", "a": "Khi gió trên 10 m/s (36 km/h) đã được xem là gió mạnh, có thể làm đổ cây nhỏ hoặc gây nguy hiểm."},
-    {"q": "nhiệt độ trung bình việt nam", "a": "Việt Nam có nhiệt độ trung bình năm khoảng 25–27°C, tùy vùng miền."},
-    {"q": "vì sao buổi sáng có sương mù", "a": "Sương mù xuất hiện khi hơi nước gần mặt đất ngưng tụ do không khí lạnh vào ban đêm."},
-    {"q": "khí hậu nhiệt đới là gì", "a": "Khí hậu nhiệt đới có đặc điểm nóng ẩm, mưa nhiều, nhiệt độ trung bình cao quanh năm."},
-]
-
-# === Gợi ý thêm 90 câu hỏi khác (Thầy có thể mở rộng) ===
-for i in range(11, 101):
-    FAQ_DATA.append({
-        "q": f"câu hỏi phổ biến {i}",
-        "a": f"Đây là câu trả lời dự phòng mẫu cho câu hỏi phổ biến số {i}. Thầy có thể thay thế nội dung này bằng thông tin thực tế."
-    })
-
-
-def find_offline_answer(user_question: str) -> str:
-    """
-    Tìm câu trả lời dự phòng trong danh sách FAQ_DATA theo từ khóa.
-    """
-    uq = user_question.lower()
-    for item in FAQ_DATA:
-        if any(keyword in uq for keyword in item["q"].split()):
-            return item["a"]
-    return "Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Em có thể hỏi lại theo cách khác nhé."
-
-
-# ===== Giao diện khung Chatbot =====
-st.markdown('<div class="panel">', unsafe_allow_html=True)
-st.markdown("### 🤖 Chatbot AI – Hỏi đáp về Thời tiết & Khí hậu")
-
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-# Ô nhập câu hỏi
-user_input = st.text_input("💬 Nhập câu hỏi của em (ví dụ: 'Vì sao trời nóng hơn vào mùa hè?')")
-
-if st.button("🚀 Gửi câu hỏi"):
-    if user_input.strip():
-        answer = ask_chatbot(user_input)
-        st.session_state.chat_history.append(("Học sinh", user_input))
-        st.session_state.chat_history.append(("Chatbot", answer))
-
-# Hiển thị hội thoại
-chat_box = st.container()
-with chat_box:
-    st.markdown('<div class="chatbox">', unsafe_allow_html=True)
-    for role, text in st.session_state.chat_history:
-        if role == "Học sinh":
-            st.markdown(f"🧑‍🎓 **{role}:** {text}")
-        else:
-            st.markdown(f"🤖 **{role}:** {text}")
-    st.markdown('</div>', unsafe_allow_html=True)
-
+# ===========================
+# 2️⃣ Khung cấu hình
+# ===========================
+st.markdown('<div class="frame config-frame">', unsafe_allow_html=True)
+st.subheader("⚙️ Cấu hình")
+selected_place = st.selectbox("Chọn tỉnh/thành:", options=list(PROVINCES_34.keys()))
+st.markdown("Chọn thông số hiển thị:")
+params_default = ["Nhiệt độ (°C)", "Độ ẩm (%)", "Lượng mưa (mm)", "Tốc độ gió (m/s)", "Chỉ số UV"]
+selected_params = st.multiselect("Thông số", options=params_default, default=params_default[:4])
+allow_csv = st.checkbox("Cho phép xuất CSV (cột không dấu)", value=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ===== Footer =====
+# ===========================
+# 3️⃣ Khung kết quả tra cứu
+# ===========================
+st.markdown('<div class="frame result-frame">', unsafe_allow_html=True)
+st.subheader("🌦️ Kết quả tra cứu")
+
+def fetch_data(lat, lon):
+    tz = "Asia/Ho_Chi_Minh"
+    params = "temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,uv_index"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly={params}&timezone={tz}"
+    r = requests.get(url, timeout=10)
+    r.raise_for_status()
+    js = r.json()
+    df = pd.DataFrame({
+        "Thời gian": js["hourly"]["time"],
+        "Nhiệt độ (°C)": js["hourly"]["temperature_2m"],
+        "Độ ẩm (%)": js["hourly"]["relative_humidity_2m"],
+        "Lượng mưa (mm)": js["hourly"]["precipitation"],
+        "Tốc độ gió (m/s)": js["hourly"]["wind_speed_10m"],
+        "Chỉ số UV": js["hourly"]["uv_index"]
+    })
+    df["Thời gian"] = pd.to_datetime(df["Thời gian"])
+    return df
+
+lat, lon = PROVINCES_34[selected_place]
+if st.button("🔄 Lấy dữ liệu thời gian thực"):
+    with st.spinner("Đang truy xuất dữ liệu thời gian thực..."):
+        df = fetch_data(lat, lon)
+        st.success(f"✅ Nguồn dữ liệu: Open-Meteo (API đã kết nối thành công) | {selected_place}")
+        show_cols = ["Thời gian"] + [p for p in selected_params if p in df.columns]
+        st.dataframe(df[show_cols], use_container_width=True)
+
+        # Biểu đồ
+        if "Nhiệt độ (°C)" in selected_params:
+            st.plotly_chart(px.line(df, x="Thời gian", y="Nhiệt độ (°C)", title="Biểu đồ Nhiệt độ"), use_container_width=True)
+        if "Độ ẩm (%)" in selected_params:
+            st.plotly_chart(px.line(df, x="Thời gian", y="Độ ẩm (%)", title="Biểu đồ Độ ẩm"), use_container_width=True)
+
+        # Xuất dữ liệu
+        if allow_csv:
+            export = df.rename(columns={
+                "Thời gian": "thoi_gian", "Nhiệt độ (°C)": "nhiet_do",
+                "Độ ẩm (%)": "do_am", "Lượng mưa (mm)": "luong_mua",
+                "Tốc độ gió (m/s)": "toc_do_gio", "Chỉ số UV": "uv_index"
+            })
+            export["dia_phuong"] = selected_place
+            csv = export.to_csv(index=False, encoding="utf-8-sig")
+            st.download_button("💾 Xuất CSV (cột không dấu)", data=csv, file_name=f"thoitiet_{selected_place}.csv", mime="text/csv")
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ===========================
+# 4️⃣ Khung thông tin nhanh
+# ===========================
+st.markdown('<div class="frame info-frame">', unsafe_allow_html=True)
+st.subheader("📡 Thông tin nhanh")
+st.markdown("- ✅ **Nguồn dữ liệu:** Open-Meteo (API đã kết nối thành công)")
+st.markdown(f"- 📍 **Khu vực:** {selected_place}")
+st.markdown(f"- 🌐 **Vĩ độ – Kinh độ:** {lat:.4f}, {lon:.4f}")
+st.markdown('- ⏰ **Cập nhật:** Thời gian thực khi bấm “Lấy dữ liệu”')
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ===========================
+# 5️⃣ Khung hướng dẫn sử dụng
+# ===========================
+st.markdown('<div class="frame guide-frame">', unsafe_allow_html=True)
+st.subheader("🎓 Hướng dẫn sử dụng ngắn gọn")
 st.markdown("""
-<div class="footer">
-© 2025 Trường THPT Lê Quý Đôn – Long Bình Tân | Web app thu thập dữ liệu thời gian thực
-</div>
-""", unsafe_allow_html=True)
+1️⃣ **Chọn địa phương** từ danh sách (Cấu hình).  
+2️⃣ **Nhấn “Lấy dữ liệu thời gian thực”** để xem bảng và biểu đồ.  
+3️⃣ **Xuất CSV** để lưu dữ liệu học tập, các cột đã chuyển không dấu.  
+📘 Ứng dụng này giúp học sinh **rèn luyện tư duy dữ liệu – đọc hiểu biểu đồ – vận dụng CNTT trong học tập STEM.**
+""")
+st.markdown('</div>', unsafe_allow_html=True)
