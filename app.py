@@ -1,6 +1,6 @@
 # ===========================
 # ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC
-# Phiên bản 3 – Giao diện 5 khung tông xanh chuyên nghiệp
+# Phiên bản 3.1 – Giao diện 5 khung + điều chỉnh vị trí bản quyền và thông tin nhanh
 # ===========================
 
 import streamlit as st
@@ -12,7 +12,7 @@ import plotly.express as px
 st.set_page_config(page_title="ỨNG DỤNG TRA CỨU THỜI TIẾT THỜI GIAN THỰC", layout="wide")
 
 # ===========================
-# CSS: chia 5 khung, màu line & fill riêng biệt
+# CSS: chia 5 khung, thêm footer cố định dưới
 # ===========================
 st.markdown("""
 <style>
@@ -43,10 +43,10 @@ html, body, [class*="css"]  {
   100% { text-shadow: 0 0 8px #00eaff, 0 0 20px #00cfff, 0 0 30px #00bfff; }
 }
 
-/* Thanh bản quyền */
-.fixed-topbar {
+/* Thanh bản quyền cố định phía dưới */
+.fixed-footer {
   position: fixed;
-  top: 55px;
+  bottom: 0;
   left: 0;
   width: 100%;
   background: rgba(255,255,255,0.95);
@@ -55,7 +55,7 @@ html, body, [class*="css"]  {
   font-size: 15px;
   text-align: center;
   padding: 8px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
   z-index: 9999;
 }
 
@@ -100,14 +100,18 @@ div.stButton > button:hover {
 """, unsafe_allow_html=True)
 
 # ===========================
-# 1️⃣ Khung tiêu đề
+# 1️⃣ Tiêu đề + Thông tin nhanh (đưa lên sau tiêu đề)
 # ===========================
 st.markdown('<div class="title-frame"><div class="neon-title">ỨNG DỤNG TRA CỨU THÔNG SỐ THỜI TIẾT THỜI GIAN THỰC</div></div>', unsafe_allow_html=True)
 
-# Thanh bản quyền cố định trên cùng
+# 📡 Thông tin nhanh – hiển thị ngay dưới tiêu đề
 st.markdown("""
-<div class="fixed-topbar">
-© 2025 Trường THPT Lê Quý Đôn – Long Bình Tân | Web app thu thập dữ liệu thời gian thực
+<div class="frame info-frame">
+<h4>📡 Thông tin nhanh</h4>
+✅ Nguồn dữ liệu: Open-Meteo (API đã kết nối thành công)<br>
+📍 Khu vực: Đồng Nai<br>
+🌐 Vĩ độ – Kinh độ: 10.9453, 106.8246<br>
+⏰ Cập nhật: Thời gian thực khi bấm “Lấy dữ liệu”
 </div>
 """, unsafe_allow_html=True)
 
@@ -214,17 +218,6 @@ if st.button("🔄 Lấy dữ liệu thời gian thực"):
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ===========================
-# 4️⃣ Khung thông tin nhanh
-# ===========================
-st.markdown('<div class="frame info-frame">', unsafe_allow_html=True)
-st.subheader("📡 Thông tin nhanh")
-st.markdown("- ✅ **Nguồn dữ liệu:** Open-Meteo (API đã kết nối thành công)")
-st.markdown(f"- 📍 **Khu vực:** {selected_place}")
-st.markdown(f"- 🌐 **Vĩ độ – Kinh độ:** {lat:.4f}, {lon:.4f}")
-st.markdown('- ⏰ **Cập nhật:** Thời gian thực khi bấm “Lấy dữ liệu”')
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ===========================
 # 5️⃣ Khung hướng dẫn sử dụng
 # ===========================
 st.markdown('<div class="frame guide-frame">', unsafe_allow_html=True)
@@ -236,3 +229,12 @@ st.markdown("""
 📘 Ứng dụng này giúp học sinh **rèn luyện tư duy dữ liệu – đọc hiểu biểu đồ – vận dụng CNTT trong học tập STEM.**
 """)
 st.markdown('</div>', unsafe_allow_html=True)
+
+# ===========================
+# Footer bản quyền – cố định dưới trang
+# ===========================
+st.markdown("""
+<div class="fixed-footer">
+© 2025 Trường THPT Lê Quý Đôn – Long Bình Tân | Web app thu thập dữ liệu thời gian thực
+</div>
+""", unsafe_allow_html=True)
