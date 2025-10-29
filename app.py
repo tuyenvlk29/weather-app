@@ -158,13 +158,33 @@ PROVINCES_34 = {
 # ===========================
 # 2️⃣ Khung cấu hình
 # ===========================
+# ===========================
+# 2️⃣ Khung cấu hình (chữ checkbox màu trắng)
+# ===========================
+st.markdown("""
+<style>
+/* Đổi màu chữ checkbox sang trắng cho dễ đọc */
+div[data-testid="stCheckbox"] label p {
+    color: white !important;
+    font-weight: 600;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown('<div class="frame config-frame">', unsafe_allow_html=True)
 st.subheader("⚙️ Cấu hình")
+
+# Chọn tỉnh/thành
 selected_place = st.selectbox("Chọn tỉnh/thành:", options=list(PROVINCES_34.keys()))
+
+# Chọn thông số hiển thị
 st.markdown("Chọn thông số hiển thị:")
 params_default = ["Nhiệt độ (°C)", "Độ ẩm (%)", "Lượng mưa (mm)", "Tốc độ gió (m/s)", "Chỉ số UV"]
 selected_params = st.multiselect("Thông số", options=params_default, default=params_default[:4])
+
+# Ô tích trắng chữ trắng rõ ràng
 allow_csv = st.checkbox("Cho phép xuất CSV (cột không dấu)", value=True)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ===========================
